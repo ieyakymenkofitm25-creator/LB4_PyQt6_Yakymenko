@@ -1,0 +1,70 @@
+"""Завдання 1: віджети та адаптивні компонування."""
+import sys
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import (QApplication, QWidget, QLabel, QPushButton, QLineEdit,
+    QTextEdit, QComboBox, QCheckBox, QSlider, QSpinBox, QProgressBar,
+    QVBoxLayout, QHBoxLayout, QFormLayout, QGroupBox)
+
+class WidgetsWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle('ЛБ №4 — Завдання 1: базові віджети')
+        self.setMinimumSize(580, 470)
+        root = QVBoxLayout(self)
+        title = QLabel('Анкета учасника')
+        title.setToolTip('Демонстрація QLabel')
+        root.addWidget(title)
+        group = QGroupBox('Дані')
+        form = QFormLayout(group)
+        self.name = QLineEdit()
+        self.name.setPlaceholderText('Введіть ім’я')
+        self.name.setToolTip('Поле введення імені')
+        form.addRow('Ім’я:', self.name)
+        self.category = QComboBox()
+        self.category.addItems(['Студент', 'Викладач', 'Гість'])
+        self.category.setToolTip('Оберіть категорію')
+        form.addRow('Категорія:', self.category)
+        self.age = QSpinBox()
+        self.age.setRange(14, 100)
+        self.age.setValue(18)
+        form.addRow('Вік:', self.age)
+        self.notes = QTextEdit()
+        self.notes.setPlaceholderText('Додаткові відомості...')
+        self.notes.setMaximumHeight(90)
+        form.addRow('Коментар:', self.notes)
+        root.addWidget(group)
+        self.consent = QCheckBox('Погоджуюся з умовами')
+        self.consent.setToolTip('Підтвердіть згоду')
+        root.addWidget(self.consent)
+        slider_row = QHBoxLayout()
+        slider_row.addWidget(QLabel('Прогрес:'))
+        self.slider = QSlider(Qt.Orientation.Horizontal)
+        self.slider.setRange(0, 100)
+        self.slider.setValue(35)
+        self.slider.setToolTip('Змініть рівень прогресу')
+        slider_row.addWidget(self.slider)
+        self.progress = QProgressBar()
+        self.progress.setRange(0, 100)
+        self.progress.setValue(35)
+        slider_row.addWidget(self.progress)
+        root.addLayout(slider_row)
+        self.slider.valueChanged.connect(self.progress.setValue)
+        self.button = QPushButton('Показати дані')
+        self.button.setToolTip('Вивести короткий підсумок')
+        self.result = QLabel('Заповніть форму та натисніть кнопку')
+        self.result.setWordWrap(True)
+        buttons = QHBoxLayout()
+        buttons.addWidget(self.button)
+        buttons.addWidget(self.result, 1)
+        root.addLayout(buttons)
+        self.button.clicked.connect(self.show_summary)
+
+    def show_summary(self):
+        name = self.name.text().strip() or 'Не вказано'
+        self.result.setText(f'{name}; {self.category.currentText()}; вік {self.age.value()}; згода: {"так" if self.consent.isChecked() else "ні"}')
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    window = WidgetsWindow()
+    window.show()
+    sys.exit(app.exec())
